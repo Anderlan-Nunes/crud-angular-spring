@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
+import { CoursesComponent } from './courses.component';
 
 export const COURSES_ROUTES: Routes = [
   { path: '', component: CoursesComponent },
-  { path: 'new', component: CourseFormComponent, resolve: { course: CourseResolver } },
-  { path: 'edit/:id', component: CourseFormComponent, resolve: { course: CourseResolver } }
+
 ];
