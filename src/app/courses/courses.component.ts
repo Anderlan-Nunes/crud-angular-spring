@@ -14,7 +14,10 @@ import { Course } from './models/course';
 })
 export class CoursesComponent {
 
-  courses : Course[] = [];
+  courses : Course[] = [
+    {_id: '1', name: 'Angular', category: 'Frontend'},
+    {_id: '2', name: 'React', category: 'Frontend'},
+  ];
   displayedColumns: string[] = ['name', 'category'];
   
 
