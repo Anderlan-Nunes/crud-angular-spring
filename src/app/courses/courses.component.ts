@@ -5,6 +5,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { Course } from './models/course';
+import { CoursesService } from './services/courses.service';
 
 @Component({
   selector: 'app-courses',
@@ -14,11 +15,14 @@ import { Course } from './models/course';
 })
 export class CoursesComponent {
 
-  courses : Course[] = [
-    {_id: '1', name: 'Angular', category: 'Frontend'},
-    {_id: '2', name: 'React', category: 'Frontend'},
-  ];
   displayedColumns: string[] = ['name', 'category'];
-  
+  courses: Course[] = [];
+
+  constructor(private coursesService: CoursesService) {
+
+  }
+  ngOnInit() {
+    this.courses = this.coursesService.listCourses();
+  }
 
 }
