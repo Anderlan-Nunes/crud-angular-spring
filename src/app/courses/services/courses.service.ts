@@ -1,19 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Course } from '../models/course';
+import { first, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoursesService {
 
+  private readonly API = './assets/courses.json';
+
   constructor(private httpClient : HttpClient) { }
 
-  listCourses() : Course[] {
-    return [
-        {_id: '1', name: 'Angular', category: 'Frontend'},
-        {_id: '2', name: 'React', category: 'Frontend'},
-    ]
+  listCourses() : Observable<Course[]> {
+    return this.httpClient.get<Course[]>(this.API).pipe(
+      first(), // finaliza a inscrição assim quando obter a primeira resposta que o servidor me enviar, (usa quando nao eh um websocket)
+      tap(courses => console.log(courses)) // tap é um operador que permite executar uma função com o resultado do observable, sem alterar o resultado do observable usa-se para fazer debug
+    );  
   }
 }
 

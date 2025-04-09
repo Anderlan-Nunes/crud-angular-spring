@@ -6,6 +6,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { Course } from './models/course';
 import { CoursesService } from './services/courses.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-courses',
@@ -16,13 +17,14 @@ import { CoursesService } from './services/courses.service';
 export class CoursesComponent {
 
   displayedColumns: string[] = ['name', 'category'];
-  courses: Course[] = [];
+  courses: Observable<Course[]>
 
   constructor(private coursesService: CoursesService) {
+    this.courses = this.coursesService.listCourses();
 
   }
   ngOnInit() {
-    this.courses = this.coursesService.listCourses();
+    
   }
 
 }
