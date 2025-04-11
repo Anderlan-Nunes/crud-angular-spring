@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 import {MatCardModule} from '@angular/material/card';
 import {MatTableModule} from '@angular/material/table';
@@ -26,7 +26,7 @@ export class CoursesComponent {
   courses$: Observable<Course[]>
 
   constructor(private coursesService: CoursesService) {
-    this.courses$ = this.coursesService.listCourses();
+    this.courses$ = this.coursesService.listCourses()
 
   }
   ngOnInit() {
