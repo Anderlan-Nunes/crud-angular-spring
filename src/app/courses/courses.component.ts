@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { catchError, Observable, of } from 'rxjs';
 
@@ -9,7 +9,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Course } from './models/course';
 import { CoursesService } from './services/courses.service';
-import { error } from 'node:console';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../shared/components/error-dialog/error-dialog.component';
 
@@ -21,13 +20,14 @@ import { ErrorDialogComponent } from '../shared/components/error-dialog/error-di
     CommonModule
   ],
   templateUrl: './courses.component.html',
-  styleUrl: './courses.component.scss'
+  styleUrl: './courses.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CoursesComponent {
 
   displayedColumns: string[] = ['name', 'category'];
   courses$: Observable<Course[]>
-  dialog = inject(MatDialog);
+  readonly dialog = inject(MatDialog);
 
   constructor(private coursesService: CoursesService) {
     this.courses$ = this.coursesService.listCourses()

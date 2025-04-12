@@ -13,6 +13,14 @@ $custom-theme: mat.m2-define-light-theme((
   )
   ));
 
+  :root {
+    @include mat.dialog-overrides((
+    
+    container-color: orange,
+    subhead-color: green,
+  ));
+}
+
 @include mat.core-theme($custom-theme);
 
 @include mat.all-component-themes($custom-theme);
