@@ -6,19 +6,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
 
 import { Course } from './models/course';
 import { CoursesService } from './services/courses.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../shared/components/error-dialog/error-dialog.component';
+import { CategoryPipe } from "../shared/pipes/category.pipe";
 
 
 
 @Component({
   selector: 'app-courses',
-  imports: [MatTableModule, MatCardModule, MatToolbarModule, MatProgressSpinnerModule,
-    CommonModule
-  ],
+  imports: [MatTableModule, MatCardModule, MatToolbarModule, MatProgressSpinnerModule, MatIconModule,
+    CommonModule, CategoryPipe],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
