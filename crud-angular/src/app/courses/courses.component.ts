@@ -26,7 +26,7 @@ import { CategoryPipe } from "../shared/pipes/category.pipe";
 })
 export class CoursesComponent {
 
-  displayedColumns: string[] = ['name', 'category'];
+  displayedColumns: string[] = ['_id', 'name', 'category'];
   courses$: Observable<Course[]>
   readonly dialog = inject(MatDialog);
 
