@@ -1,0 +1,33 @@
+mat-card {
+  max-width: 80%;
+  margin: 2em auto; // EM vai falar que a martem é 2 vezes o tamanho padrão
+  text-align: center;
+}
+
+mat-form-field:first-child {
+  margin-top: 20px;
+}
+
+mat-card-actions  {
+  display: flex;
+  gap: 1em;
+  margin-left: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// caso queira deixar centralizado o botão
+// mat-card {
+//   max-width: 80%;
+//   margin: 2em auto;
+//   text-align: center;
+
+//   mat-card-actions {
+//     display: flex;
+//     justify-content: center;
+//     gap: 1em;
+//     margin-top: 1em;
+//   }
+// }
