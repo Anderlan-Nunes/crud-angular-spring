@@ -12,8 +12,13 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Categoria:</mat-label>
-                <input matInput placeholder="Digite a Categoria do curso" formControlName="category">
+                <mat-label>Categoria</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option></mat-option>
+                    @for (option of category; track option.value) {
+                    <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+                    }
+                </mat-select>
             </mat-form-field>
         </form>
     </mat-card-content>
