@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
@@ -29,6 +30,10 @@ interface Category {
 export class CourseFormComponent {
 
 private readonly _snackBar = inject(MatSnackBar);
+private readonly coursesService = inject(CoursesService);
+private readonly formBuilder = inject(FormBuilder);
+private readonly _localtion = inject(Location);
+
 
 category: Category[] = [
     {value: 'Full-stack'},
@@ -37,9 +42,7 @@ category: Category[] = [
   ];
 
   form: FormGroup;
-  constructor(private readonly formBuilder: FormBuilder,
-    private readonly coursesService: CoursesService
-  ) { 
+  constructor() { 
     this.form = this.formBuilder.group({
       name: [null],
       category: [null],
@@ -50,19 +53,27 @@ category: Category[] = [
   onSubmit() {
     this.coursesService.save(this.form.value)
       .subscribe({
-        next: result => console.log('resultado: ', result),
+       // next: result => console.log('resultado: ', result),
+        next: result => this.onSuccess(),
         error: error => this.onError(error),
-        complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde
+        //complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde // Remove o complete ou use apenas para limpeza/log
       });
   }
 
-  onCancel() {
-    this.form.reset();
+  onCancel() { 
+    this._localtion.back();
+  }
+
+  private onSuccess() {
+    this._snackBar.open('Curso salvo com sucesso!', '', {
+      duration: 3000
+    });
+    this.onCancel();
   }
 
   private onError(error: HttpErrorResponse) {
     this._snackBar.open('Erro ao salvar curso!', 'Fechar', {
-      duration: 5000
+      duration: 7000
     });
   console.error('Erro ao salvar curso:', error);
   console.error('Status:', error.status);
