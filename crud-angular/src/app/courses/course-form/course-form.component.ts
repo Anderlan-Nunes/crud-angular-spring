@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import {MatButtonModule} from '@angular/material/button';
@@ -7,10 +7,13 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBar} from '@angular/material/snack-bar';
+
+import { CoursesService } from '../services/courses.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface Category {
   value: string;
-  viewValue: string;
 }
 
 @Component({
@@ -25,14 +28,18 @@ interface Category {
 })
 export class CourseFormComponent {
 
+private readonly _snackBar = inject(MatSnackBar);
+
 category: Category[] = [
-    {value: '0', viewValue: 'Full-stack'},
-    {value: '1', viewValue: 'Front-end'},
-    {value: '2', viewValue: 'Back-end'},
+    {value: 'Full-stack'},
+    {value: 'Front-end'},
+    {value: 'Back-end'},
   ];
 
   form: FormGroup;
-  constructor(private readonly formBuilder: FormBuilder) { 
+  constructor(private readonly formBuilder: FormBuilder,
+    private readonly coursesService: CoursesService
+  ) { 
     this.form = this.formBuilder.group({
       name: [null],
       category: [null],
@@ -40,4 +47,26 @@ category: Category[] = [
     });
   }
 
+  onSubmit() {
+    this.coursesService.save(this.form.value)
+      .subscribe({
+        next: result => console.log('resultado: ', result),
+        error: error => this.onError(error),
+        complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde
+      });
+  }
+
+  onCancel() {
+    this.form.reset();
+  }
+
+  private onError(error: HttpErrorResponse) {
+    this._snackBar.open('Erro ao salvar curso!', 'Fechar', {
+      duration: 5000
+    });
+  console.error('Erro ao salvar curso:', error);
+  console.error('Status:', error.status);
+  console.error('Detalhes:', error.error);
+  console.log('Tentativa de salvamento falhou');
+  }
 }
