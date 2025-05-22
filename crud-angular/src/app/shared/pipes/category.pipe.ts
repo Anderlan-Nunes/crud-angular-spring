@@ -7,10 +7,12 @@ export class CategoryPipe implements PipeTransform {
 
   transform(value: string): string {
     switch(value) {
-      case 'Frontend':
+      case 'Front-end':
         return 'code';
-      case 'Backend':
+      case 'Back-end':
         return 'computer';
+      case 'Full-stack':
+        return 'developer_mode_tv'
     }
     return 'code'; // Retorna o valor original se não houver correspondência
   }
