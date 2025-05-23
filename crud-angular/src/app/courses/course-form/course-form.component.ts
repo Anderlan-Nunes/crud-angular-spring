@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 
 import {MatButtonModule} from '@angular/material/button';
@@ -29,27 +29,29 @@ interface Category {
 })
 export class CourseFormComponent {
 
-private readonly _snackBar = inject(MatSnackBar);
-private readonly coursesService = inject(CoursesService);
-private readonly formBuilder = inject(FormBuilder);
-private readonly _localtion = inject(Location);
+  private readonly _snackBar = inject(MatSnackBar);
+  private readonly coursesService = inject(CoursesService);
+  private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly _localtion = inject(Location);
 
-
-category: Category[] = [
-    {value: 'Full-stack'},
-    {value: 'Front-end'},
-    {value: 'Back-end'},
+  category: Category[] = [
+    { value: 'Full-stack' },
+    { value: 'Front-end' },
+    { value: 'Back-end' },
   ];
 
-  form: FormGroup;
-  constructor() { 
-    this.form = this.formBuilder.group({
-      name: [null],
-      category: [null],
-      // category: [this.category[0].value],
-    });
-  }
+  form = this.formBuilder.group({
+    name: [''],
+    category: ['']
+  });
 
+  constructor() { 
+
+  };
+
+  ngOnInit() {
+    this.form.value.name = null
+  }
   onSubmit() {
     this.coursesService.save(this.form.value)
       .subscribe({
