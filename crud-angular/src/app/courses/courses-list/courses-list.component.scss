@@ -1,0 +1,16 @@
+.mate-table {
+    overflow: auto;
+    max-height: 600px;
+}
+
+// .action-column { // o angular ja usa o display flex
+//     flex: 0 0 75px;
+//     align-items: center;
+//     justify-content: center;
+// }
+
+.narrow-column { // o angular ja usa o display flex
+    flex: 0 0 75px;
+    align-items: center;
+    justify-content: center;
+}

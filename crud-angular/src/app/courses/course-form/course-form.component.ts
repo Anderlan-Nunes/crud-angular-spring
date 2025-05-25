@@ -49,9 +49,6 @@ export class CourseFormComponent {
 
   };
 
-  ngOnInit() {
-    this.form.value.name = null
-  }
   onSubmit() {
     this.coursesService.save(this.form.value)
       .subscribe({
