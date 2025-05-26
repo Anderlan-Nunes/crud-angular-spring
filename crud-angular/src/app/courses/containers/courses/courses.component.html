@@ -1,0 +1,32 @@
+<mat-card >
+
+  <mat-card-content>
+    <mat-toolbar color="primary"><span>Cursos Disponíveis</span></mat-toolbar>
+
+    <div class="columm-flex mat-elevation-z8">
+      @if (courses$ | async; as courses) {
+        <app-courses-list 
+          [courses]="courses"
+          (add)="onAddCourse()"></app-courses-list>
+      } @else {
+          <div class="loading-spinner">
+            <mat-spinner></mat-spinner>
+          </div>
+        }
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- refactor: Separação de componentes em smart e dumb Melhora a organização e testabilidade dos componentes Angular ao refatorar CursosComponent como container smart e CursosListComponent como componente de apresentação. A lógica de roteamento foi movida para o container, e a comunicação entre eles agora ocorre via inputs e outputs.
+
+refactor(components): Refatoração para componentes smart e dumb Este commit implementa a arquitetura de componentes smart (container) e dumb (UI) para o módulo de cursos. 
+
+Principais mudanças: 
+- `CursosComponent` agora atua como um componente smart, gerenciando a lógica de negócios, serviços e roteamento. 
+- `CursosListComponent` foi refatorado para ser um componente de apresentação, focado na exibição de dados e emissão de eventos.
+ - A comunicação entre smart e dumb components é feita através de @Input() e @Output() (EventEmitter). 
+- Estrutura de pastas atualizada para `containers/` e `components/` dentro do módulo `cursos`. 
+Benefícios: 
+- Aumenta a testabilidade dos componentes. 
+- Melhora a organização e reusabilidade do código. 
+- Separação clara de responsabilidades (lógica vs. UI). -->

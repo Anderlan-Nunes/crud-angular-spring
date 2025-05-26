@@ -1,16 +1,17 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { catchError, Observable, of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { Course } from './models/course';
-import { CoursesService } from './services/courses.service';
-import { ErrorDialogComponent } from '../shared/components/error-dialog/error-dialog.component';
-import { CoursesListComponent } from "./courses-list/courses-list.component";
+import { Course } from '../../models/course';
+import { CoursesService } from '../../services/courses.service';
+import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
+import { CoursesListComponent } from "../../components/courses-list/courses-list.component";
 
 
 
@@ -26,6 +27,8 @@ export class CoursesComponent {
 
   courses$: Observable<Course[]>
   readonly dialog = inject(MatDialog);
+  readonly route = inject(ActivatedRoute);
+  readonly router = inject(Router);
 
 
   constructor(private readonly coursesService: CoursesService) {
@@ -42,6 +45,10 @@ export class CoursesComponent {
     this.dialog.open(ErrorDialogComponent, {
       data: errorMsg
     })
+  }
+
+  onAddCourse(){
+    this.router.navigate(['new'], { relativeTo: this.route }); // relativeTo: this.route opcao extra que pega a rota que eu estou e agrega esse /new faz isso para nao precisar usar o courses/new. caso um dia precisasse mudar a rota, eu só mudaria aqui e não em todos os lugares que usei o /courses/new
   }
 
 

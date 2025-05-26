@@ -10,8 +10,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
-import { CoursesService } from '../services/courses.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CoursesService } from '../../services/courses.service';
 
 interface Category {
   value: string;
