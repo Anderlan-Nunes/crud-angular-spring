@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,13 @@ public class CouserController {
   @GetMapping
   public List<Course> list() {
     return courseRepository.findAll();
+  }
+
+  @GetMapping("/{id}") // esse método vai receber o id atraves da URL
+  public ResponseEntity<Course> fingById(@PathVariable Long id) {
+    return courseRepository.findById(id)
+      .map(record -> ResponseEntity.ok().body(record)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
+      .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
   }
 
   //@PostMapping // 1
