@@ -12,6 +12,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { CoursesService } from '../../services/courses.service';
+import { ActivatedRoute } from '@angular/router';
+import { Course } from '../../models/course';
 
 interface Category {
   value: string;
@@ -33,6 +35,7 @@ export class CourseFormComponent {
   private readonly coursesService = inject(CoursesService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly _localtion = inject(Location); // Usando o Location para navegar de volta
+  private readonly route = inject(ActivatedRoute);
 
   category: Category[] = [
     { value: 'Full-stack' },
@@ -41,6 +44,7 @@ export class CourseFormComponent {
   ];
 
   form = this.formBuilder.group({
+    _id: [''],
     name: [''],
     category: ['']
   });
@@ -49,6 +53,15 @@ export class CourseFormComponent {
 
   };
 
+  ngOnInit() {
+    const course: Course = this.route.snapshot.data['course']; // Obtendo o curso do resolver
+   // console.log('Curso obtido do resolver:', course);
+   this.form.setValue({
+      _id: course._id, 
+      name: course.name,
+      category: course.category
+    });
+  }
   onSubmit() {
     this.coursesService.save(this.form.value)
       .subscribe({
