@@ -51,5 +51,8 @@ export class CoursesComponent {
     this.router.navigate(['new'], { relativeTo: this.route }); // relativeTo: this.route opcao extra que pega a rota que eu estou e agrega esse /new faz isso para nao precisar usar o courses/new. caso um dia precisasse mudar a rota, eu só mudaria aqui e não em todos os lugares que usei o /courses/new
   }
 
+  onEditCourse(course: Course) { // o evento pode ser qualquer coisa mas espero uma variavel do tipo Course, Ai faz o que quer com essa variavel.
+    this.router.navigate(['edit', course._id], { relativeTo: this.route });
+  }
 
 }

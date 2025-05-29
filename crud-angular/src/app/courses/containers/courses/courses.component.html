@@ -7,7 +7,8 @@
       @if (courses$ | async; as courses) {
         <app-courses-list 
           [courses]="courses"
-          (add)="onAddCourse()"></app-courses-list>
+          (add)="onAddCourse()"
+          (edit)="onEditCourse($event)"></app-courses-list>
       } @else {
           <div class="loading-spinner">
             <mat-spinner></mat-spinner>
@@ -30,3 +31,7 @@ Benefícios:
 - Aumenta a testabilidade dos componentes. 
 - Melhora a organização e reusabilidade do código. 
 - Separação clara de responsabilidades (lógica vs. UI). -->
+
+<!-- $event 
+$event isso é um objeto que contém informações sobre o evento que ocorreu, como o curso selecionado para edição. O $event do propio typeScript é usado para passar dados do componente filho (CursosListComponent) para o componente pai (CursosComponent) quando um evento ocorre, como um clique no botão de editar curso.
+-->

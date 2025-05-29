@@ -32,7 +32,7 @@ export class CourseFormComponent {
   private readonly _snackBar = inject(MatSnackBar);
   private readonly coursesService = inject(CoursesService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
-  private readonly _localtion = inject(Location);
+  private readonly _localtion = inject(Location); // Usando o Location para navegar de volta
 
   category: Category[] = [
     { value: 'Full-stack' },

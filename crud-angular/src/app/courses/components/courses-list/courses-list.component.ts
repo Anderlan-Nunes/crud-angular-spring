@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,14 +19,22 @@ export class CoursesListComponent {
 
   @Input() courses: Course[] = [] // 1
   @Output() add = new EventEmitter(false);  // 2
-  displayedColumns: string[] = ['_id', 'name', 'category', 'actions'];
+  @Output() edit = new EventEmitter(false);
+
+  readonly displayedColumns: string[] = ['_id', 'name', 'category', 'actions'];
 
 
   onAdd() { // 3
     // Método chamado quando o usuário clica no botão de adicionar curso
     this.add.emit(true);
   }
-} ; 
+
+  onEdit(course: Course) {
+    this.edit.emit(course); // eu poderia passar só o identificador mas vou passara variavei inteira e quem que for escultar evento decide o que fazer com essa informação
+  }
+
+}
+
 
  
 // 1 @Input()
