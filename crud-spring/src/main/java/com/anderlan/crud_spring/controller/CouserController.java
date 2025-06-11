@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,7 +42,7 @@ public class CouserController {
   @GetMapping("/{id}") // esse método vai receber o id atraves da URL
   public ResponseEntity<Course> fingById(@PathVariable Long id) {
     return courseRepository.findById(id)
-      .map(record -> ResponseEntity.ok().body(record)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
+      .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
       .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
   }
 
@@ -63,6 +64,18 @@ public class CouserController {
 
   public Course create(@RequestBody Course course) {
     return courseRepository.save(course);
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course course) {
+    return courseRepository.findById(id)
+        .map(recordFound -> {
+          recordFound.setName(course.getName());
+          recordFound.setCategory(course.getCategory());
+          Course updated = courseRepository.save(recordFound);// aqui eu estou atualizando o curso que foi encontrado no banco de dados com os dados que foram enviados no corpo da requisição.
+          return ResponseEntity.ok().body(updated); // se encontrar o curso, eu vou atualizar o curso e retornar o curso atualizado no corpo da resposta.
+        })
+        .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
   }
 }
 
@@ -88,3 +101,11 @@ public class CouserController {
  * Ambas as abordagens alcançam o mesmo objetivo de definir o código de status HTTP retornado pela API [14:57, 15:05].
  *  No entanto, a vantagem de ResponseEntity é a capacidade de manipular os cabeçalhos da resposta. Como neste caso a intenção era apenas retornar o status de "created" (201) sem nenhuma manipulação adicional no cabeçalho, a anotação @ResponseStatus tornou o código mais conciso e limpo
  */
+
+/* 3 - ("/{id}") @PathVariable Long id
+ * quando usamos o ("/{id}") temo s que usar o @PathVariable Long id
+ * O @PathVariable é uma anotação do Spring que indica que o valor do parâmetro id deve ser extraído da URL da requisição. Isso permite que o método receba o id do curso diretamente da URL, facilitando a busca pelo curso específico no banco de dados.
+ * Pode tambem usar assim :
+ * @PutMapping("/{id}")
+ * public Course update(@PathVariable("id") Long identificadorQualquerNome)
+*/
