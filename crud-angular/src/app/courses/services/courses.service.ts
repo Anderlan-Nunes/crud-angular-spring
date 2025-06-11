@@ -24,8 +24,24 @@ export class CoursesService {
     return this.httpClient.get<Course>(`${this.API}/${id}`) //pega o id do curso que foi passado na rota
   }
 
-  save(record: Partial<Course>) { // o record é os dados que vem do formulario é o corpo do meu post
+  save(record: Partial<Course>) {
+    console.log('record->' + JSON.stringify(record));
+    if (record._id) {
+      //console.log('record._id->' + record._id);
+      return this.update(record); // se o record tiver um id, significa que é uma atualização
+    }
+    //console.log('create');
+    return this.create(record)
+  }
+
+  private create(record: Partial<Course>) { // o record é os dados que vem do formulario é o corpo do meu post
     return this.httpClient.post<Course>(this.API, record).pipe(
+      first(), // finaliza a inscrição assim quando obter a primeira resposta que o servidor me enviar, não eh nescessário usar porque o angular ja termina a inscrição depois de receber a resposta do servidor mas é para garantir que a inscrição é finalizada.
+    );
+  }
+
+  private update(record: Partial<Course>) {
+    return this.httpClient.put<Course>(`${this.API}/${record._id}`, record).pipe(
       first(), // finaliza a inscrição assim quando obter a primeira resposta que o servidor me enviar, não eh nescessário usar porque o angular ja termina a inscrição depois de receber a resposta do servidor mas é para garantir que a inscrição é finalizada.
     );
   }
