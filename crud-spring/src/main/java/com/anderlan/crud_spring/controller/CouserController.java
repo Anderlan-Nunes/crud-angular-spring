@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +75,16 @@ public class CouserController {
           recordFound.setCategory(course.getCategory());
           Course updated = courseRepository.save(recordFound);// aqui eu estou atualizando o curso que foi encontrado no banco de dados com os dados que foram enviados no corpo da requisição.
           return ResponseEntity.ok().body(updated); // se encontrar o curso, eu vou atualizar o curso e retornar o curso atualizado no corpo da resposta.
+        })
+        .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+     return courseRepository.findById(id)
+        .map(recordFound -> {
+          courseRepository.deleteById(id);
+          return ResponseEntity.noContent().<Void>build();
         })
         .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
   }
