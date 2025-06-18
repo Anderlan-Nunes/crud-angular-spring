@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { catchError, Observable, of } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,7 +23,7 @@ import { error } from 'console';
     CommonModule, CoursesListComponent],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class CoursesComponent {
 
@@ -32,13 +32,13 @@ export class CoursesComponent {
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
   private readonly _snackBar = inject(MatSnackBar);
+  cdr = inject(ChangeDetectorRef)
 
   constructor(private readonly coursesService: CoursesService) {
-    this.refresh();
+    this.loadCourses();
   }
 
-  refresh() {
-    console.log('aki')
+  private loadCourses() {
     this.courses$ = this.coursesService.listCourses()
       .pipe(
         catchError(error => {
@@ -47,7 +47,7 @@ export class CoursesComponent {
           return of([]);
         })
       )
-      console.log('aki saiu')
+      this.cdr.markForCheck(); // <- força a verificação de mudança
   }
   onError(errorMsg: string) {
     this.dialog.open(ErrorDialogComponent, {
@@ -66,7 +66,7 @@ export class CoursesComponent {
   onRemove(course: Course){
     this.coursesService.remove(course._id).subscribe({
       next: () => {
-        this.refresh();
+        this.loadCourses();
         this._snackBar.open('Curso removido com sucesso!', 'X', {
       duration: 5000,
       verticalPosition: 'top',
