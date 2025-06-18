@@ -20,6 +20,7 @@ export class CoursesListComponent {
   @Input() courses: Course[] = [] // 1
   @Output() add = new EventEmitter(false);  // 2
   @Output() edit = new EventEmitter(false);
+  @Output() removeList = new EventEmitter(false);
 
   readonly displayedColumns: string[] = ['_id', 'name', 'category', 'actions'];
 
@@ -33,6 +34,10 @@ export class CoursesListComponent {
     this.edit.emit(course); // eu poderia passar só o identificador mas vou passara variavei inteira e quem que for escultar evento decide o que fazer com essa informação
   }
 
+  onDelete(course: Course) {
+    this.removeList.emit(course);
+  }
+  
 }
 
 

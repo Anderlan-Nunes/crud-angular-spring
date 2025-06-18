@@ -8,7 +8,11 @@
         <app-courses-list 
           [courses]="courses"
           (add)="onAddCourse()"
-          (edit)="onEditCourse($event)"></app-courses-list>
+          (edit)="onEditCourse($event)"
+          (removeList)="onRemove($event)"
+        > 
+        </app-courses-list>
+          
       } @else {
           <div class="loading-spinner">
             <mat-spinner></mat-spinner>

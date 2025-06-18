@@ -24,7 +24,7 @@ export class CoursesService {
     return this.httpClient.get<Course>(`${this.API}/${id}`) //pega o id do curso que foi passado na rota
   }
 
-  save(record: Partial<Course>) {
+  save(record: Partial<Course>) { // serve para salva e para update
     console.log('record->' + JSON.stringify(record));
     if (record._id) {
       //console.log('record._id->' + record._id);
@@ -44,6 +44,10 @@ export class CoursesService {
     return this.httpClient.put<Course>(`${this.API}/${record._id}`, record).pipe(
       first(), // finaliza a inscrição assim quando obter a primeira resposta que o servidor me enviar, não eh nescessário usar porque o angular ja termina a inscrição depois de receber a resposta do servidor mas é para garantir que a inscrição é finalizada.
     );
+  }
+
+  remove(id: string){ //
+    return this.httpClient.delete(`${this.API}/${id}`).pipe(first());
   }
 }
 
