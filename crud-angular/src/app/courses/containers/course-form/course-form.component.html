@@ -8,7 +8,11 @@
         <form [formGroup]="form" class="min-width">
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Nome:</mat-label>
-                <input matInput placeholder="Digite o nome do curso" formControlName="name">
+                <input matInput placeholder="Digite o nome do curso" formControlName="name" #name>
+                <mat-hint align="end">{{ name.value.length || 0}}/100</mat-hint>
+                @if (form.get("name")?.invalid) {
+                <mat-error>{{ getErrorMessage("name") }}</mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
@@ -19,6 +23,9 @@
                     <mat-option [value]="option.value">{{ option.value }}</mat-option>
                     }
                 </mat-select>
+                @if (form.get("category")?.invalid) {
+                <mat-error>{{ getErrorMessage("category") }}</mat-error>
+                }
             </mat-form-field>
         </form>
     </mat-card-content>

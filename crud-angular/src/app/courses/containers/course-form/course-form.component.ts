@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
 import {MatButtonModule} from '@angular/material/button';
@@ -45,8 +45,10 @@ export class CourseFormComponent {
 
   form = this.formBuilder.group({
     _id: [''],
-    name: [''],
-    category: ['']
+    name: ['', [Validators.required,
+    Validators.minLength(5),
+    Validators.maxLength(100)]],
+    category: ['', Validators.required]
   });
 
   constructor() { 
@@ -91,5 +93,23 @@ export class CourseFormComponent {
   console.error('Status:', error.status);
   console.error('Detalhes:', error.error);
   console.log('Tentativa de salvamento falhou');
+  }
+
+  getErrorMessage(fildeName: string) {
+    const field = this.form.get(fildeName);
+    if (field?.hasError('required')) {
+      return 'Você deve inserir um valor';
+    }
+
+    if (field?.hasError('minlength')) {
+      const requiredLength : number = field.errors ? field.errors['minlength']['requiredLength'] : 5;
+      return `O tamanho mínimo é de ${requiredLength} caracteres`;
+    }
+
+    if (field?.hasError('maxlength')) {
+      const requiredLength : number = field.errors ? field.errors['maxlength']['requiredLength'] : 100;
+      return `O tamanho máximo é de ${requiredLength} caracteres`;
+    }
+    return 'Campo inválido';
   }
 }
