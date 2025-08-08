@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anderlan.crud_spring.model.Course;
 import com.anderlan.crud_spring.repository.CourseRepository;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+
+@Validated // essa anotação é usada para validar os dados que estão sendo enviados no corpo da requisição. Ela vai validar os dados antes de chegar no método do controller. Então, se os dados não estiverem válidos, o Spring vai retornar um erro 400 (Bad Request) e não vai chamar o método do controller.
+// se voce so usar o @Valid nao precisava, mas como estou usando o notNull e o positive, eu preciso usar o @Validated para que o Spring valide esses dados antes de chegar no método do controller.
 
 @RestController // que ele faz. ele vai falar por Spring que essa classe ela contém uma url que nós vamos poder acessar a nossa API // pos traz do panos isso é um Java servlet que vai ter os métodos do post, do get, delet e etc.
 
@@ -41,7 +48,7 @@ public class CouserController {
   }
 
   @GetMapping("/{id}") // esse método vai receber o id atraves da URL
-  public ResponseEntity<Course> fingById(@PathVariable Long id) {
+  public ResponseEntity<Course> fingById(@PathVariable @NotNull @Positive Long id) {
     return courseRepository.findById(id)
       .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
       .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
@@ -63,12 +70,12 @@ public class CouserController {
   @PostMapping
   @ResponseStatus(code = HttpStatus.CREATED)
 
-  public Course create(@RequestBody Course course) {
+  public Course create(@RequestBody @Valid Course course) {
     return courseRepository.save(course);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course course) {
+  public ResponseEntity<Course> update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
     return courseRepository.findById(id)
         .map(recordFound -> {
           recordFound.setName(course.getName());
@@ -80,7 +87,7 @@ public class CouserController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
+  public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
      return courseRepository.findById(id)
         .map(recordFound -> {
           courseRepository.deleteById(id);

@@ -21,7 +21,7 @@ public class CrudSpringApplication {
 			courseRepository.deleteAll(); // Deletar todos os cursos do banco de dados antes de inserir novos cursos.
 			Course course = new Course();
 			course.setName("Java");
-			course.setCategory("Programação");
+			course.setCategory("Frontend");
 			courseRepository.save(course);
 		};
 	}

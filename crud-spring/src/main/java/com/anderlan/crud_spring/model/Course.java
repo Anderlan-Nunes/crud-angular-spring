@@ -7,6 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data // Lombok é uma biblioteca que ajuda a reduzir o código boilerplate, como getters e setters. Ele gera o getters e os setters aqui
@@ -21,9 +25,15 @@ public class Course {
   @JsonProperty("_id")// essa anotaçao indica que o campo id sera mapeado para o campo _id no json.
   private Long id;
 
-  @Column(length = 200, nullable = false) 
+  @NotBlank // nao deixa ser um espaço
+  @NotNull // not null nao deixa ser nulo e tambem nao deixa ser vazio
+  @Size(min = 3, max = 100)
+  @Column(length = 100, nullable = false) 
   private String name;
 
+  @NotNull
+  @Size(max = 20)
+  @Pattern(regexp = "Backend|Frontend|Fullstack")
   @Column(length = 20, nullable = false) 
   private String category;
   
@@ -35,3 +45,12 @@ public class Course {
 //  @Column(name = "nome") // Essa anotação indica que o campo name será mapeado para a coluna "nome" na tabela do banco de dados. O hibernate vai criar uma coluna chamada "nome" na tabela e vai mapear o campo name da classe para essa coluna.
 
 //  @Column(length = 200)// Essa anotação indica que o campo name será mapeado para uma coluna no banco de dados. O length indica o tamanho máximo da coluna no banco de dados. O hibernate vai criar uma coluna com o nome name e o tamanho máximo de 200 caracteres. -> padrao eh 255
+
+/*@Column x @Size
+ * @Size(min=..., max=...) é validação (Bean Validation). Garante que a string tenha entre min e max caracteres no nível da aplicação (antes de persistir / ao validar DTOs).
+
+@Column(length = ..., nullable = ...) é mapeamento JPA. Diz ao provedor JPA/ao gerador de schema qual será o tamanho da coluna no banco (por exemplo VARCHAR(100)) e se deve aceitar NULL.
+
+O que cada um faz na prática
+@Size impede que valores muito curtos/longos passem na validação (por exemplo, quando você usa @Valid em controladores Spring MVC). Se violado, você recebe um erro de validação e não prossegue.
+ */
