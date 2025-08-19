@@ -1,5 +1,8 @@
 package com.anderlan.crud_spring.model;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -17,6 +20,9 @@ import lombok.Data;
 @Entity // Essa anotação indica que a classe Course é uma entidade JPA, o que significa que ela será mapeada para uma tabela no banco de dados.
 
 //**@Table(name = "cursos")** // Essa anotação indica que a tabela no banco de dados se chamará "cursos". Como o hibernate já vai pegar o nome da classe e colocar no banco de dados, não precisa colocar essa anotação. Mas se na empresa ja existisse um banco de dados ao inves de criar um novo, poderia colocar essa anotação para o hibernate não criar uma nova tabela com o nome da classe.
+
+@SQLDelete(sql = "UPDATE Course SET status = 'Inactive' WHERE id = ?") // Essa anotação indica que quando um curso for deletado, ele não será realmente removido do banco de dados, mas sim atualizado para o status "Inactive". Isso é útil para manter o histórico dos cursos e evitar a exclusão física dos dados.
+@SQLRestriction("status = 'Active'")
 
 public class Course {
 
@@ -36,7 +42,13 @@ public class Course {
   @Pattern(regexp = "Backend|Frontend|Fullstack")
   @Column(length = 20, nullable = false) 
   private String category;
-  
+
+  @NotNull
+  @Size(max = 10) // validação em tempo de execução
+  @Pattern(regexp = "Active|Inactive")
+  @Column(length = 10, nullable = false) // é uma anotação de persistência que define o tamanho da coluna no banco de dados
+  private String status = "Active"; // valor padrão para o status, caso não seja informado na criação do curso.
+
 }
 
 // @GeneratedValue(strategy = GenerationType.AUTO) // Essa anotação indica que o valor do campo id será gerado automaticamente pelo banco de dados. O hibernate vai gerar um valor único para o campo id quando um novo curso for criado. O strategy é a estratégia de geração do id. O AUTO significa que o hibernate vai escolher a melhor estratégia de geração de id para o banco de dados que você está usando. Você pode usar outras estratégias, como IDENTITY, SEQUENCE ou TABLE, **dependendo do banco de dados e da sua necessidade.**
