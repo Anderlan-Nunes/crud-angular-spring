@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anderlan.crud_spring.model.Course;
 import com.anderlan.crud_spring.repository.CourseRepository;
+import com.anderlan.crud_spring.service.CourseService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
+// import lombok.AllArgsConstructor; ela mudou para Controller → Service → Repository
 
 @Validated // essa anotação é usada para validar os dados que estão sendo enviados no corpo da requisição. Ela vai validar os dados antes de chegar no método do controller. Então, se os dados não estiverem válidos, o Spring vai retornar um erro 400 (Bad Request) e não vai chamar o método do controller.
 // se voce so usar o @Valid nao precisava, mas como estou usando o notNull e o positive, eu preciso usar o @Validated para que o Spring valide esses dados antes de chegar no método do controller.
@@ -30,26 +31,23 @@ import lombok.AllArgsConstructor;
 
 @RequestMapping("/api/courses") // que essa vai ser qual que é realmente o endPoint que vai ficar exposto. Então, essa classe vai ser responsável por fazer o CRUD do couser.
 
-@AllArgsConstructor // vai gerar um construtor para mim. Então, eu não preciso fazer o construtor q serve com injençao de dependencia manualmente.
+//@AllArgsConstructor // vai gerar um construtor para mim. Então, eu não preciso fazer o construtor q serve com injençao de dependencia manualmente.
 public class CouserController {
 
-  private final CourseRepository courseRepository; // o repositório é a camada de persistência, ou seja, é onde nós vamos fazer as operações de CRUD no banco de dados. Usar-se *final* é uma boa prática, pois assim o Spring não vai ficar criando instâncias do repositório toda hora. Então, o Spring só vai criar uma instância do repositório quando a classe for instanciada. 
+  private final CourseService courseService; // injeção de dependência do service  
   
-  
-  /**
-  public CouserController(CourseRepository courseRepository) { // o construtor é o que vai fazer a injeção de dependência, ou seja, ele vai pegar o repositório e vai injetar aqui dentro da classe. quando faz isso nao precisa fazer a anotação ->@Autowired-<, porque o Spring já sabe que esse construtor é o que vai fazer a injeção de dependência. mas como eu estou usanto a anotaçao @AllArgsConstructor, eu não preciso fazer isso pq ele ja vai gerar o construtor pra mim.
-    this.courseRepository = courseRepository;
-  }*/
-
+  public CouserController(CourseService courseService) { // o construtor é o que vai fazer a injeção de dependência, ou seja, ele vai pegar o repositório e vai injetar aqui dentro da classe. quando faz isso nao precisa fazer a anotação ->@Autowired-<, porque o Spring já sabe que esse construtor é o que vai fazer a injeção de dependência. mas como eu estou usanto a anotaçao @AllArgsConstructor, eu não preciso fazer isso pq ele ja vai gerar o construtor pra mim.
+    this.courseService = courseService; // injeção de dependência do service
+  }
 
   @GetMapping
   public List<Course> list() {
-    return courseRepository.findAll();
+    return courseService.list(); // ela mudou para Controller → Service → Repository
   }
 
   @GetMapping("/{id}") // esse método vai receber o id atraves da URL
   public ResponseEntity<Course> fingById(@PathVariable @NotNull @Positive Long id) {
-    return courseRepository.findById(id)
+    return courseService.findById(id)
       .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
       .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
   }
@@ -71,29 +69,21 @@ public class CouserController {
   @ResponseStatus(code = HttpStatus.CREATED)
 
   public Course create(@RequestBody @Valid Course course) {
-    return courseRepository.save(course);
+    return courseService.create(course);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<Course> update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
-    return courseRepository.findById(id)
-        .map(recordFound -> {
-          recordFound.setName(course.getName());
-          recordFound.setCategory(course.getCategory());
-          Course updated = courseRepository.save(recordFound);// aqui eu estou atualizando o curso que foi encontrado no banco de dados com os dados que foram enviados no corpo da requisição.
-          return ResponseEntity.ok().body(updated); // se encontrar o curso, eu vou atualizar o curso e retornar o curso atualizado no corpo da resposta.
-        })
+    return courseService.update(id, course)
+        .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se encontrar o curso, eu vou atualizar o curso e retornar o curso atualizado no corpo da resposta.
         .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
-     return courseRepository.findById(id)
-        .map(recordFound -> {
-          courseRepository.deleteById(id);
-          return ResponseEntity.noContent().<Void>build();
-        })
-        .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
+     if (courseService.delete(id))
+        return ResponseEntity.noContent().<Void>build(); // se encontrar o curso, eu vou deletar o curso e retornar um status 204 (no content) e não vou retornar nada no corpo da resposta.
+     return ResponseEntity.notFound().build();
   }
 }
 
