@@ -3,7 +3,6 @@ package com.anderlan.crud_spring.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.anderlan.crud_spring.model.Course;
 import com.anderlan.crud_spring.repository.CourseRepository;
+import com.anderlan.crud_spring.exception.RecordNotFoundException;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -30,30 +30,33 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
-    public Optional<Course> findById(@PathVariable @NotNull @Positive Long id) {
-        return courseRepository.findById(id);// se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
-        // ainda falta exceção...
+    public Course findById(@PathVariable @NotNull @Positive Long id) {
+        return courseRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));// sempre tem que retornar algo, caso nao retrorne um curso, eu lanço uma exceção. mas a exceção que eu criei.
     }
 
     public Course create(@RequestBody @Valid Course course) {
         return courseRepository.save(course);
     }
 
-    public Optional<Course> update(@NotNull @Positive Long id, @Valid Course course) {
+    public Course update(@NotNull @Positive Long id, @Valid Course course) {
     return courseRepository.findById(id)
         .map(recordFound -> {
           recordFound.setName(course.getName());
           recordFound.setCategory(course.getCategory());
           return courseRepository.save(recordFound);
-        });
+        }).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }
 
-    public boolean delete(@PathVariable @NotNull @Positive Long id) {
-     return courseRepository.findById(id)
-        .map(recordFound -> {
-          courseRepository.deleteById(id);
-          return true;
-        })
-        .orElse(false);
+    public void delete(@PathVariable @NotNull @Positive Long id) {
+
+        courseRepository.delete(courseRepository.findById(id)
+            .orElseThrow(() -> new RecordNotFoundException(id, "Curso"))); // usa essa forma para ser mais consisa e nao retorna nada.
+
+        // courseRepository.findById(id)
+        //     .map(recordFound -> {
+        //         courseRepository.deleteById(id);
+        //         return true;
+        // })
+        // .orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }
 }

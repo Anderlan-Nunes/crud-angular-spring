@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anderlan.crud_spring.model.Course;
-import com.anderlan.crud_spring.repository.CourseRepository;
 import com.anderlan.crud_spring.service.CourseService;
 
 import jakarta.validation.Valid;
@@ -46,10 +45,8 @@ public class CouserController {
   }
 
   @GetMapping("/{id}") // esse método vai receber o id atraves da URL
-  public ResponseEntity<Course> fingById(@PathVariable @NotNull @Positive Long id) {
-    return courseService.findById(id)
-      .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se vier coom a informoção do BD eu vou retornar isso no corpo da minha informação, ou seja, vou retornar o curso que foi encontrado no banco de dados.
-      .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not found) e não vou retornar nada no corpo da resposta.
+  public Course fingById(@PathVariable @NotNull @Positive Long id) {
+    return courseService.findById(id);
   }
 
   //@PostMapping // 1
@@ -73,17 +70,14 @@ public class CouserController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Course> update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
-    return courseService.update(id, course)
-        .map(recordFound -> ResponseEntity.ok().body(recordFound)) // se encontrar o curso, eu vou atualizar o curso e retornar o curso atualizado no corpo da resposta.
-        .orElse(ResponseEntity.notFound().build()); // se nao encontrar o curso, eu vou retornar um status 404 (not// found) e não vou retornar nada no corpo da resposta.
+  public Course update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
+    return courseService.update(id, course);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
-     if (courseService.delete(id))
-        return ResponseEntity.noContent().<Void>build(); // se encontrar o curso, eu vou deletar o curso e retornar um status 204 (no content) e não vou retornar nada no corpo da resposta.
-     return ResponseEntity.notFound().build();
+  @ResponseStatus(code = HttpStatus.NO_CONTENT) // caso de sucesso retorna 204 (No Content) pq nao tem conteudo para retornar. Isso para nao usar o ResponseEntity<Void> que é mais verboso.
+  public void delete(@PathVariable @NotNull @Positive Long id) {
+    courseService.delete(id);
   }
 }
 
