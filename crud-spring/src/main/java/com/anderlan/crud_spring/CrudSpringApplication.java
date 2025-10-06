@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.anderlan.crud_spring.enums.Category;
 import com.anderlan.crud_spring.model.Course;
 import com.anderlan.crud_spring.repository.CourseRepository;
 
@@ -21,7 +22,7 @@ public class CrudSpringApplication {
 			courseRepository.deleteAll(); // Deletar todos os cursos do banco de dados antes de inserir novos cursos.
 			Course course = new Course();
 			course.setName("Java");
-			course.setCategory("Frontend");
+			course.setCategory(Category.BACK_END);
 			courseRepository.save(course);
 		};
 	}

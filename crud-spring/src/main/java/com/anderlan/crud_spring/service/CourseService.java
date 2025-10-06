@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.anderlan.crud_spring.repository.CourseRepository;
 import com.anderlan.crud_spring.dto.CourseDTO;
 import com.anderlan.crud_spring.dto.mapper.CourseMapper;
+import com.anderlan.crud_spring.enums.Category;
 import com.anderlan.crud_spring.exception.RecordNotFoundException;
 
 import jakarta.validation.Valid;
@@ -46,7 +47,7 @@ public class CourseService {
     return courseRepository.findById(id)
         .map(recordFound -> {
           recordFound.setName(course.name());
-          recordFound.setCategory(course.category());
+          recordFound.setCategory(Category.BACK_END); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
           return courseMapper.toDTO(courseRepository.save(recordFound));
         }).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }

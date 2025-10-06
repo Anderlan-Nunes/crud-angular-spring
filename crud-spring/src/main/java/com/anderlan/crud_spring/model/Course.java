@@ -3,9 +3,12 @@ package com.anderlan.crud_spring.model;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.anderlan.crud_spring.enums.Category;
+import com.anderlan.crud_spring.enums.converters.CategoryConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,10 +41,12 @@ public class Course {
   private String name;
 
   @NotNull
-  @Size(max = 20)
-  @Pattern(regexp = "Backend|Frontend|Fullstack")
+  //@Size(max = 20)
+  //@Pattern(regexp = "Backend|Frontend|Fullstack")
   @Column(length = 20, nullable = false) 
-  private String category;
+  //@Enumerated(EnumType.STRING) // essa anotação indica que o campo category é um enum e que ele será armazenado no banco de dados como um número inteiro (ordinal). O valor do enum será armazenado como o índice do enum (0, 1, 2, ...). Se eu usasse EnumType.STRING, o valor do enum seria armazenado como uma string (BACK_END, FRONT_END, ...).
+  @Convert(converter = CategoryConverter.class) // essa anotação indica que o campo category será convertido para o banco de dados usando a classe CategoryConverter. Essa classe é responsável por converter o enum para uma string e vice-versa.
+  private Category category;
 
   @NotNull
   @Size(max = 10) // validação em tempo de execução
