@@ -5,12 +5,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.anderlan.crud_spring.repository.CourseRepository;
 import com.anderlan.crud_spring.dto.CourseDTO;
 import com.anderlan.crud_spring.dto.mapper.CourseMapper;
-import com.anderlan.crud_spring.enums.Category;
 import com.anderlan.crud_spring.exception.RecordNotFoundException;
 
 import jakarta.validation.Valid;
@@ -34,7 +32,7 @@ public class CourseService {
             .collect(Collectors.toList()); // estou usando o stream para transformar a lista de cursos em uma lista de CourseDTO. O map vai pegar cada curso e vai transformar em um CourseDTO usando o método toDTO do CourseMapper. E o collect vai transformar o stream em uma lista.
     }
 
-    public CourseDTO findById(@PathVariable @NotNull @Positive Long id) {
+    public CourseDTO findById(@NotNull @Positive Long id) {
         return courseRepository.findById(id).map(courseMapper::toDTO)
         .orElseThrow(() -> new RecordNotFoundException(id, "Curso"));// sempre tem que retornar algo, caso nao retrorne um curso, eu lanço uma exceção. mas a exceção que eu criei.
     }
@@ -47,12 +45,12 @@ public class CourseService {
     return courseRepository.findById(id)
         .map(recordFound -> {
           recordFound.setName(course.name());
-          recordFound.setCategory(Category.BACK_END); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
+          recordFound.setCategory(courseMapper.convertCategoryValue(course.category())); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
           return courseMapper.toDTO(courseRepository.save(recordFound));
         }).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }
 
-    public void delete(@PathVariable @NotNull @Positive Long id) {
+    public void delete(@NotNull @Positive Long id) {
 
         courseRepository.delete(courseRepository.findById(id)
             .orElseThrow(() -> new RecordNotFoundException(id, "Curso"))); // usa essa forma para ser mais consisa e nao retorna nada.
@@ -65,3 +63,7 @@ public class CourseService {
         // .orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }
 }
+
+/*
+ * @PathVariable não é necessário aqui, lugar de usar ele eh no controller. pois é ele que vai receber a requisição HTTP.  pois ele é usado para mapear o valor da variável na URL para o parâmetro do método no controller. Aqui no service, não estamos lidando com URLs, então não faz sentido usar essa anotação.
+ */

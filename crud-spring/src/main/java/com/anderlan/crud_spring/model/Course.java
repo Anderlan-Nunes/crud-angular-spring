@@ -4,7 +4,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.anderlan.crud_spring.enums.Category;
+import com.anderlan.crud_spring.enums.Status;
 import com.anderlan.crud_spring.enums.converters.CategoryConverter;
+import com.anderlan.crud_spring.enums.converters.StatusConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -15,7 +17,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -25,7 +26,7 @@ import lombok.Data;
 //**@Table(name = "cursos")** // Essa anotação indica que a tabela no banco de dados se chamará "cursos". Como o hibernate já vai pegar o nome da classe e colocar no banco de dados, não precisa colocar essa anotação. Mas se na empresa ja existisse um banco de dados ao inves de criar um novo, poderia colocar essa anotação para o hibernate não criar uma nova tabela com o nome da classe.
 
 @SQLDelete(sql = "UPDATE Course SET status = 'Inactive' WHERE id = ?") // Essa anotação indica que quando um curso for deletado, ele não será realmente removido do banco de dados, mas sim atualizado para o status "Inactive". Isso é útil para manter o histórico dos cursos e evitar a exclusão física dos dados.
-@SQLRestriction("status = 'Active'")
+@SQLRestriction("status = 'Ativo'")
 
 public class Course {
 
@@ -49,10 +50,9 @@ public class Course {
   private Category category;
 
   @NotNull
-  @Size(max = 10) // validação em tempo de execução
-  @Pattern(regexp = "Active|Inactive")
   @Column(length = 10, nullable = false) // é uma anotação de persistência que define o tamanho da coluna no banco de dados
-  private String status = "Active"; // valor padrão para o status, caso não seja informado na criação do curso.
+  @Convert(converter = StatusConverter.class) // essa anotação indica que o campo status será convertido para o banco de dados usando a classe StatusConverter. Essa classe é responsável por converter o enum para uma string e vice-versa.
+  private Status status = Status.ACTIVE;// valor padrão para o status, caso não seja informado na criação do curso.
 
 }
 

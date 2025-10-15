@@ -13,7 +13,7 @@ public class CourseMapper {
         if (course == null) {
             return null;
         }
-        return new CourseDTO(course.getId(), course.getName(), "BACK_END"); // como o Category é um enum, precisamos converter ele para String. Aqui estou colocando "Backend" fixo -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.
+        return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue()); // como o Category é um enum, precisamos converter ele para String. Aqui estou colocando "Backend" fixo -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.
     }
 
     public Course toEntity(CourseDTO courseDTO) {
@@ -26,9 +26,23 @@ public class CourseMapper {
             course.setId(courseDTO.id());
         }
         course.setName(courseDTO.name());
-        course.setCategory(Category.BACK_END); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
+        // TODO: use a mapper for category
+        course.setCategory(convertCategoryValue(courseDTO.category())); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
         return course;
     }
+
+    public Category convertCategoryValue(String value) { // método para converter a String que vem do DTO para o enum Category. poderia tambem usar o stream.
+        if(value == null) {
+            return null;
+        }
+        return switch(value) { // switch expression (disponível a partir do Java 14)
+            case "Front-end" -> Category.FRONT_END;
+            case "Back-end" -> Category.BACK_END;
+            default -> throw new IllegalArgumentException("Invalid category value: " + value);
+        };
+    }
+
+
 }
 
 // estudar depois sobre padrão builder (builder pattern) para fazer o mapeamento.
