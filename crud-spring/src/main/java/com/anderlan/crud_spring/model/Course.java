@@ -1,5 +1,8 @@
 package com.anderlan.crud_spring.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -9,12 +12,15 @@ import com.anderlan.crud_spring.enums.converters.CategoryConverter;
 import com.anderlan.crud_spring.enums.converters.StatusConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -53,6 +59,12 @@ public class Course {
   @Column(length = 10, nullable = false) // é uma anotação de persistência que define o tamanho da coluna no banco de dados
   @Convert(converter = StatusConverter.class) // essa anotação indica que o campo status será convertido para o banco de dados usando a classe StatusConverter. Essa classe é responsável por converter o enum para uma string e vice-versa.
   private Status status = Status.ACTIVE;// valor padrão para o status, caso não seja informado na criação do curso.
+
+  // começar a declarar a associação entre Course e Lesson de um para muitos (1:N) // a classe dona do relacionamento é a classe Course, pois ela contém a lista de Lessons.  
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "course") // essa anotação indica que a associação entre Course e Lesson é de um para muitos (1:N).mappedBy indica que o lado dono da relação é o lado Many (Lesson) e que o campo que mapeia essa relação na classe Lesson é o campo course. CascadeType.ALL indica que todas as operações (persistir, atualizar, deletar) feitas no Course serão propagadas para as Lessons associadas a ele. OrphanRemoval = true indica que quando uma Lesson for removida da lista de Lessons do Course, ela será deletada do banco de dados.
+  //@JoinColumn(name = "course_id") // essa anotação indica que a tabela Lesson terá uma coluna chamada course_id que será a chave estrangeira para a tabela Course.
+  private List<Lesson> lessons = new ArrayList<>();
+
 
 }
 
