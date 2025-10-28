@@ -1,5 +1,8 @@
 package com.anderlan.crud_spring.dto;
 
+import java.util.List;
+
+import com.anderlan.crud_spring.model.Lesson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +12,8 @@ import jakarta.validation.constraints.Size;
 public record CourseDTO(
     @JsonProperty Long id,
     @NotBlank @NotNull @Size(min = 3, max = 100) String name,
-    @NotNull @Size(max = 20) String category
+    @NotNull @Size(max = 20) String category,
+    List<Lesson> lessons
 ) {
     
 }

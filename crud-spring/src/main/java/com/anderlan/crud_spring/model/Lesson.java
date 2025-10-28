@@ -1,5 +1,7 @@
 package com.anderlan.crud_spring.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,6 +29,7 @@ public class Lesson {
     // vamos mapear o course tambem aqui para fazer o relacionamento bidirecional, Aki o relacionamento é ManyToOne, ou seja, muitas aulas para um curso. muitos para um (N:1)
     @ManyToOne(fetch = FetchType.LAZY, optional = false) // FetchType.LAZY indica que o curso associado a uma aula só será carregado do banco de dados quando for acessado pela primeira vez. Só quando chamar o getCourse desta liçao eh que vai carregar o mapeamento
     @JoinColumn(name = "course_id", nullable = false) // essa anotação indica que a tabela Lesson terá uma coluna chamada course_id que será a chave estrangeira para a tabela Course.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // apenas vamos fazer o set deste curso, nunca o get. Assim evitamos um loop infinito na serialização JSON.
     private Course course;
 }
     
