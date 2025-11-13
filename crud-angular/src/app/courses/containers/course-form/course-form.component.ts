@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
@@ -29,7 +29,7 @@ interface Category {
   styleUrl: './course-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CourseFormComponent {
+export class CourseFormComponent implements OnInit{
 
   private readonly _snackBar = inject(MatSnackBar);
   private readonly coursesService = inject(CoursesService);
@@ -51,7 +51,7 @@ export class CourseFormComponent {
     category: ['', Validators.required]
   });
 
-  constructor() { 
+  constructor() {
 
   };
 
@@ -59,11 +59,13 @@ export class CourseFormComponent {
     const course: Course = this.route.snapshot.data['course']; // Obtendo o curso do resolver
    // console.log('Curso obtido do resolver:', course);
    this.form.setValue({
-      _id: course._id, 
+      _id: course._id,
       name: course.name,
       category: course.category
     });
+    console.log('ngOinit do course-form = ',course)
   }
+
   onSubmit() {
     this.coursesService.save(this.form.value)
       .subscribe({
@@ -74,7 +76,7 @@ export class CourseFormComponent {
       });
   }
 
-  onCancel() { 
+  onCancel() {
     this._localtion.back();
   }
 

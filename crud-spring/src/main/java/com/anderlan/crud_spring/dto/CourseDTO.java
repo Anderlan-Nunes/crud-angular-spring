@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CourseDTO(
-    @JsonProperty Long id,
+    @JsonProperty("_id") Long id,
     @NotBlank @NotNull @Size(min = 3, max = 100) String name,
     @NotNull @Size(max = 20) String category,
     List<LessonDTO> lessons
