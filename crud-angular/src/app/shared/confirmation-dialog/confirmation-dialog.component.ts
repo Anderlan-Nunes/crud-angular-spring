@@ -6,16 +6,14 @@ import {MatButtonModule} from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle,
 } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-confirmation-dialog',
-    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, MatDialogContent, MatDialogActions,
   ],
   templateUrl: './confirmation-dialog.component.html',
   styleUrl: './confirmation-dialog.component.scss',
