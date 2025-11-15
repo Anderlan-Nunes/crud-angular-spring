@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
 import {MatButtonModule} from '@angular/material/button';
@@ -14,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CoursesService } from '../../services/courses.service';
 import { ActivatedRoute } from '@angular/router';
 import { Course } from '../../models/course';
+import { Lesson } from '../../models/lesson';
 
 interface Category {
   value: string;
@@ -38,18 +39,11 @@ export class CourseFormComponent implements OnInit{
   private readonly route = inject(ActivatedRoute);
 
   category: Category[] = [
-    { value: 'Full-stack' },
     { value: 'Front-end' },
-    { value: 'Back-end' },
+    { value: 'Back-end' }
   ];
 
-  form = this.formBuilder.group({
-    _id: [''],
-    name: ['', [Validators.required,
-    Validators.minLength(5),
-    Validators.maxLength(100)]],
-    category: ['', Validators.required]
-  });
+  form!: FormGroup;
 
   constructor() {
 
@@ -58,12 +52,38 @@ export class CourseFormComponent implements OnInit{
   ngOnInit() {
     const course: Course = this.route.snapshot.data['course']; // Obtendo o curso do resolver
    // console.log('Curso obtido do resolver:', course);
-   this.form.setValue({
-      _id: course._id,
-      name: course.name,
-      category: course.category
+
+    this.form = this.formBuilder.group({
+    _id: [course._id],
+    name: [course.name, [Validators.required,
+    Validators.minLength(5),
+    Validators.maxLength(100)]],
+    category: [course.category, Validators.required],
+    lessons: this.formBuilder.array(this.retriveLessons(course))
+  });
+    console.log('ngOinit do course-form #course= ',course)
+    console.log('ngOinit do Course-form #form=', this.form)
+    console.log('ngOinit do Course-form #formvalue=', this.form.value)
+  }
+
+  private retriveLessons(course: Course) { // o array de licoes vem do curso, pode colocar aki diretamente o array de lesson mas como to trabalhando com a variavel curso eu vou usar aki
+    const lessons = [];
+    if (course?.lessons) {
+      course.lessons?.forEach( lesson => lessons.push(this.createLesson(lesson)))
+    } else {
+      lessons.push(this.createLesson())
+    }
+    return lessons;
+  }
+
+  private createLesson(lesson: Lesson | null = null) {
+
+    const lessonData = lesson ?? {id: '', name: '', youtubeUrl: ''};
+    return this.formBuilder.group({
+      id: [lessonData.id],
+      name: [lessonData.name],
+      youtubeUrl: [lessonData.youtubeUrl]
     });
-    console.log('ngOinit do course-form = ',course)
   }
 
   onSubmit() {
