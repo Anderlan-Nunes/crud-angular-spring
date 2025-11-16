@@ -27,6 +27,37 @@
                 <mat-error>{{ getErrorMessage("category") }}</mat-error>
                 }
             </mat-form-field>
+
+            <mat-toolbar>
+              <span>Aulas</span>
+              <button mat-icon-button color="accent">
+                <mat-icon arial-label="Adicionar uma nova aula">add</mat-icon>
+              </button>
+            </mat-toolbar>
+
+            <table style="width: 100%" formArrayName="lessons">
+              @for (lesson of getLessonsFormArray(); track $index) {
+                <tr [formGroupName]="$index">
+                  <td style="width:65%">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Nome da Aula:</mat-label>
+                      <input matInput formControlName="name">
+                    </mat-form-field>
+                  </td>
+                  <td style="width:30%">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>URL:</mat-label>
+                      <span matTextPrefix>https.//youtu.be/</span>
+                      <input matInput formControlName="youtubeUrl">
+                    </mat-form-field>
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="2">Nenhuma aula cadastrada.</td>
+                </tr>
+                }
+            </table>
         </form>
     </mat-card-content>
 

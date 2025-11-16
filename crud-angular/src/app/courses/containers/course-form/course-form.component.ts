@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, UntypedFormArray, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
 import {MatButtonModule} from '@angular/material/button';
@@ -9,12 +9,14 @@ import {MatInputModule} from '@angular/material/input';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatIcon } from "@angular/material/icon";
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { CoursesService } from '../../services/courses.service';
 import { ActivatedRoute } from '@angular/router';
 import { Course } from '../../models/course';
 import { Lesson } from '../../models/lesson';
+
 
 interface Category {
   value: string;
@@ -23,8 +25,7 @@ interface Category {
 @Component({
   selector: 'app-course-form',
   imports: [MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatToolbarModule, MatSelectModule,
-    ReactiveFormsModule
-  ],
+    ReactiveFormsModule, MatIcon],
   standalone: true,
   templateUrl: './course-form.component.html',
   styleUrl: './course-form.component.scss',
@@ -84,6 +85,10 @@ export class CourseFormComponent implements OnInit{
       name: [lessonData.name],
       youtubeUrl: [lessonData.youtubeUrl]
     });
+  }
+
+  getLessonsFormArray() {
+    return (<UntypedFormArray>this.form.get('lessons')).controls
   }
 
   onSubmit() {
