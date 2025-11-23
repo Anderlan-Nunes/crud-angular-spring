@@ -60,7 +60,7 @@ export class CourseFormComponent implements OnInit{
     Validators.minLength(5),
     Validators.maxLength(100)]],
     category: [course.category, Validators.required],
-    lessons: this.formBuilder.array(this.retriveLessons(course))
+    lessons: this.formBuilder.array(this.retriveLessons(course), Validators.required)
   });
     console.log('ngOinit do course-form #course= ',course)
     console.log('ngOinit do Course-form #form=', this.form)
@@ -82,8 +82,12 @@ export class CourseFormComponent implements OnInit{
     const lessonData = lesson ?? {id: '', name: '', youtubeUrl: ''};
     return this.formBuilder.group({
       id: [lessonData.id],
-      name: [lessonData.name],
-      youtubeUrl: [lessonData.youtubeUrl]
+      name: [lessonData.name, [Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(100)]],
+      youtubeUrl: [lessonData.youtubeUrl, [Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(11)]]
     });
   }
 
@@ -97,24 +101,28 @@ export class CourseFormComponent implements OnInit{
   }
 
   removeLesson(index: number) {
-    console.log('Index recebido:', index);
+    // console.log('Index recebido:', index);
     const lessons = this.form.get('lessons') as UntypedFormArray;
-      console.log('Tamanho antes:', lessons.length);
-  console.log('Controles antes:', lessons.controls);
+    // console.log('Tamanho antes:', lessons.length);
+    // console.log('Controles antes:', lessons.controls);
     lessons.removeAt(index);
-      console.log('Tamanho depois:', lessons.length);
-  console.log('Controles depois:', lessons.controls);
+    // console.log('Tamanho depois:', lessons.length);
+    // console.log('Controles depois:', lessons.controls);
 
   }
 
   onSubmit() {
-    this.coursesService.save(this.form.value)
-      .subscribe({
-       // next: result => console.log('resultado: ', result),
-        next: result => this.onSuccess(),
-        error: error => this.onError(error),
-        //complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde // Remove o complete ou use apenas para limpeza/log
-      });
+    if (this.form.value){
+      this.coursesService.save(this.form.value)
+        .subscribe({
+         // next: result => console.log('resultado: ', result),
+          next: result => this.onSuccess(),
+          error: error => this.onError(error),
+          //complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde // Remove o complete ou use apenas para limpeza/log
+        });
+    } else {
+      alert("invalido")
+    }
   }
 
   onCancel() {
@@ -154,5 +162,10 @@ export class CourseFormComponent implements OnInit{
       return `O tamanho máximo é de ${requiredLength} caracteres`;
     }
     return 'Campo inválido';
+  }
+
+  isFormArrayRequired() {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    return !lessons.valid && lessons.hasError('required') && lessons.touched;
   }
 }
