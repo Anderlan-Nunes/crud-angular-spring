@@ -11,20 +11,19 @@
                 <input matInput placeholder="Digite o nome do curso" formControlName="name" #name>
                 <mat-hint align="end">{{ name.value.length || 0}}/100</mat-hint>
                 @if (form.get("name")?.invalid) {
-                <mat-error>{{ getErrorMessage("name") }}</mat-error>
+                <mat-error>{{ formUtils.getErrorMessage(form, "name") }}</mat-error>
                 }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Categoria</mat-label>
                 <mat-select formControlName="category">
-                    <mat-option></mat-option>
                     @for (option of category; track option.value) {
                     <mat-option [value]="option.value">{{ option.value }}</mat-option>
                     }
                 </mat-select>
                 @if (form.get("category")?.invalid) {
-                <mat-error>{{ getErrorMessage("category") }}</mat-error>
+                <mat-error>{{ formUtils.getErrorMessage(form, "category") }}</mat-error>
                 }
             </mat-form-field>
 
@@ -35,7 +34,7 @@
               </button>
             </mat-toolbar>
 
-            @if (isFormArrayRequired()) {
+            @if (formUtils.isFormArrayRequired(form, 'lessons')) {
               <mat-error class="form-array-error">
                 Adicione pelo menos uma aula
               </mat-error>
@@ -49,7 +48,7 @@
                       <mat-label>Nome da Aula:</mat-label>
                       <input matInput formControlName="name">
                       @if (getLessonsFormArray()[i].get('name')?.invalid) {
-                      <mat-error>campo nome invalido form array aulas</mat-error>
+                        <mat-error>{{ formUtils.getFormArrayFildErrorMessage(form, 'lessons', 'name', i) }}</mat-error>
                       }
                     </mat-form-field>
                   </td>
@@ -58,8 +57,8 @@
                       <mat-label>URL:</mat-label>
                       <span matTextPrefix>https.//youtu.be/</span>
                       <input matInput formControlName="youtubeUrl">
-                                            @if (getLessonsFormArray()[i].get('name')?.invalid) {
-                      <mat-error>campo url invalido form array aulas</mat-error>
+                      @if (getLessonsFormArray()[i].get('name')?.invalid) {
+                        <mat-error>{{'aki' +formUtils.getFormArrayFildErrorMessage(form, 'lessons', 'youtueUrl', i) }}</mat-error>
                       }
                     </mat-form-field>
                   </td>

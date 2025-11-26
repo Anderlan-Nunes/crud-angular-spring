@@ -16,6 +16,7 @@ import { CoursesService } from '../../services/courses.service';
 import { ActivatedRoute } from '@angular/router';
 import { Course } from '../../models/course';
 import { Lesson } from '../../models/lesson';
+import { FormUtilsService } from '../../../shared/form/form-utils.service';
 
 
 interface Category {
@@ -38,6 +39,7 @@ export class CourseFormComponent implements OnInit{
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly _localtion = inject(Location); // Usando o Location para navegar de volta
   private readonly route = inject(ActivatedRoute);
+  public readonly formUtils = inject(FormUtilsService)// pq se for privado eu nao vou ter acesso aqui no html
 
   category: Category[] = [
     { value: 'Front-end' },
@@ -62,9 +64,9 @@ export class CourseFormComponent implements OnInit{
     category: [course.category, Validators.required],
     lessons: this.formBuilder.array(this.retriveLessons(course), Validators.required)
   });
-    console.log('ngOinit do course-form #course= ',course)
-    console.log('ngOinit do Course-form #form=', this.form)
-    console.log('ngOinit do Course-form #formvalue=', this.form.value)
+    // console.log('ngOinit do course-form #course= ',course)
+    // console.log('ngOinit do Course-form #form=', this.form)
+    // console.log('ngOinit do Course-form #formvalue=', this.form.value)
   }
 
   private retriveLessons(course: Course) { // o array de licoes vem do curso, pode colocar aki diretamente o array de lesson mas como to trabalhando com a variavel curso eu vou usar aki
@@ -112,7 +114,7 @@ export class CourseFormComponent implements OnInit{
   }
 
   onSubmit() {
-    if (this.form.value){
+    if (this.form.valid){
       this.coursesService.save(this.form.value)
         .subscribe({
          // next: result => console.log('resultado: ', result),
@@ -121,7 +123,7 @@ export class CourseFormComponent implements OnInit{
           //complete: () => console.log('Operação concluída.') // (Opcional): o complete é chamado quando o observable termina, ou seja, quando o servidor responde // Remove o complete ou use apenas para limpeza/log
         });
     } else {
-      alert("invalido")
+      this.formUtils.validateAllFormFields(this.form);
     }
   }
 
@@ -140,10 +142,10 @@ export class CourseFormComponent implements OnInit{
     this._snackBar.open('Erro ao salvar curso!', 'Fechar', {
       duration: 7000
     });
-  console.error('Erro ao salvar curso:', error);
-  console.error('Status:', error.status);
-  console.error('Detalhes:', error.error);
-  console.log('Tentativa de salvamento falhou');
+  // console.error('Erro ao salvar curso:', error);
+  // console.error('Status:', error.status);
+  // console.error('Detalhes:', error.error);
+  // console.log('Tentativa de salvamento falhou');
   }
 
   getErrorMessage(fildeName: string) {
@@ -164,8 +166,5 @@ export class CourseFormComponent implements OnInit{
     return 'Campo inválido';
   }
 
-  isFormArrayRequired() {
-    const lessons = this.form.get('lessons') as UntypedFormArray;
-    return !lessons.valid && lessons.hasError('required') && lessons.touched;
-  }
+
 }
