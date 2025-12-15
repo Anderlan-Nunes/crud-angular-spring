@@ -10,6 +10,7 @@ import com.anderlan.crud_spring.repository.CourseRepository;
 import com.anderlan.crud_spring.dto.CourseDTO;
 import com.anderlan.crud_spring.dto.mapper.CourseMapper;
 import com.anderlan.crud_spring.exception.RecordNotFoundException;
+import com.anderlan.crud_spring.model.Course;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,13 +42,18 @@ public class CourseService {
         return courseMapper.toDTO(courseRepository.save(courseMapper.toEntity(course)));
     }
 
-    public CourseDTO update(@NotNull @Positive Long id, @Valid @NotNull CourseDTO course) {
-    return courseRepository.findById(id)
-        .map(recordFound -> {
-          recordFound.setName(course.name());
-          recordFound.setCategory(courseMapper.convertCategoryValue(course.category())); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
-          return courseMapper.toDTO(courseRepository.save(recordFound));
-        }).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
+    // a lista de aula esta altamento acoplada ao curso
+    public CourseDTO update(@NotNull @Positive Long id, @Valid @NotNull CourseDTO courseDTO) {
+        return courseRepository.findById(id)
+            .map(recordFound -> {
+                Course course = courseMapper.toEntity(courseDTO);
+                recordFound.setName(courseDTO.name());
+                recordFound.setCategory(courseMapper.convertCategoryValue(courseDTO.category()));// Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
+                //recordFound.setLessons(course.getLessons());
+                recordFound.getLessons().clear(); // limpa a lista de aulas existentes no curso encontrado.
+                course.getLessons().forEach(recordFound.getLessons()::add);// pega cada aula que veio no meu mapper e vou adicionar manualmente
+                return courseMapper.toDTO(courseRepository.save(recordFound));
+            }).orElseThrow(() -> new RecordNotFoundException(id, "Curso"));
     }
 
     public void delete(@NotNull @Positive Long id) {
@@ -66,4 +72,13 @@ public class CourseService {
 
 /*
  * @PathVariable não é necessário aqui, lugar de usar ele eh no controller. pois é ele que vai receber a requisição HTTP.  pois ele é usado para mapear o valor da variável na URL para o parâmetro do método no controller. Aqui no service, não estamos lidando com URLs, então não faz sentido usar essa anotação.
+ */
+
+/**
+ *  Abordagem Atual: API Acoplada
+Características
+Todas as operações passam pelo recurso Course
+Lessons está altamente acoplada ao Course
+API não expõe Lesson como recurso independente
+
  */

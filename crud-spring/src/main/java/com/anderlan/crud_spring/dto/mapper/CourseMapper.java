@@ -1,6 +1,7 @@
 package com.anderlan.crud_spring.dto.mapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -8,6 +9,7 @@ import com.anderlan.crud_spring.dto.CourseDTO;
 import com.anderlan.crud_spring.dto.LessonDTO;
 import com.anderlan.crud_spring.enums.Category;
 import com.anderlan.crud_spring.model.Course;
+import com.anderlan.crud_spring.model.Lesson;
 
 @Component // mesma coisa que o @Service, só que é mais específico para componentes que fazem mapeamento. Então, o Spring vai gerenciar essa classe como um bean, ou seja, ele vai criar uma instância dessa classe e vai injetar onde for necessário.
 public class CourseMapper {
@@ -35,6 +37,17 @@ public class CourseMapper {
         }
         course.setName(courseDTO.name());
         course.setCategory(convertCategoryValue(courseDTO.category())); // Aqui estou colocando "Backend" fixo(hardcode) -> POR ENQUNTO<- , mas poderia ser qualquer valor que esteja dentro do enum.só para parar de dar erro.
+        // Cria as lessons e associa cada uma ao course
+        List<Lesson> lessons = courseDTO.lessons().stream().map(lessonDTO -> {
+            var lesson = new Lesson();
+            lesson.setId(lessonDTO.id());
+            lesson.setName(lessonDTO.name());
+            lesson.setYoutubeUrl(lessonDTO.youtubeUrl());
+            lesson.setCourse(course);
+            return lesson;
+        }).collect(Collectors.toList());
+        course.setLessons(lessons);
+        
         return course;
     }
 
