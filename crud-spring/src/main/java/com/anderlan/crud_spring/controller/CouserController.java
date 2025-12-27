@@ -109,4 +109,6 @@ public class CouserController {
  * Pode tambem usar assim :
  * @PutMapping("/{id}")
  * public Course update(@PathVariable("id") Long identificadorQualquerNome)
-*/
+ * @PathVariable: O valor faz parte do caminho: /cursos/5
+ * @RequestParam: O valor é um parâmetro de consulta (depois da interrogação): /cursos?id=5
+ */

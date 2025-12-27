@@ -21,12 +21,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.OneToMany;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
-@Data // Lombok é uma biblioteca que ajuda a reduzir o código boilerplate, como getters e setters. Ele gera o getters e os setters aqui
 @Entity // Essa anotação indica que a classe Course é uma entidade JPA, o que significa que ela será mapeada para uma tabela no banco de dados.
 
 //**@Table(name = "cursos")** // Essa anotação indica que a tabela no banco de dados se chamará "cursos". Como o hibernate já vai pegar o nome da classe e colocar no banco de dados, não precisa colocar essa anotação. Mas se na empresa ja existisse um banco de dados ao inves de criar um novo, poderia colocar essa anotação para o hibernate não criar uma nova tabela com o nome da classe.
@@ -60,12 +60,56 @@ public class Course {
   @Convert(converter = StatusConverter.class) // essa anotação indica que o campo status será convertido para o banco de dados usando a classe StatusConverter. Essa classe é responsável por converter o enum para uma string e vice-versa.
   private Status status = Status.ACTIVE;// valor padrão para o status, caso não seja informado na criação do curso.
 
-  // começar a declarar a associação entre Course e Lesson de um para muitos (1:N) // a classe dona do relacionamento é a classe Course, pois ela contém a lista de Lessons.  
+  @NotNull
+  @NotEmpty // nao deixa ser vazio, usado para collection (coleções), arrays e map, char sequences (strings). Aqui é uma lista(collection), por isso usamos o NotEmpty.
+  @Valid // essa anotação indica que os objetos dentro da lista lessons também devem ser validados. Ou seja, as validações definidas na classe Lesson serão aplicadas a cada objeto da lista lessons.
+  // começar a declarar a associação entre Course e Lesson de um para muitos (1:N) // a classe dona do relacionamento é a classe Course, pois ela contém a lista de Lessons. A classe Lesson contém a referência para o Course, mas não contém a lista de Lessons.u 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "course") // essa anotação indica que a associação entre Course e Lesson é de um para muitos (1:N).mappedBy indica que o lado dono da relação é o lado Many (Lesson) e que o campo que mapeia essa relação na classe Lesson é o campo course. CascadeType.ALL indica que todas as operações (persistir, atualizar, deletar) feitas no Course serão propagadas para as Lessons associadas a ele. OrphanRemoval = true indica que quando uma Lesson for removida da lista de Lessons do Course, ela será deletada do banco de dados.
   //@JoinColumn(name = "course_id") // essa anotação indica que a tabela Lesson terá uma coluna chamada course_id que será a chave estrangeira para a tabela Course.
   private List<Lesson> lessons = new ArrayList<>();
 
+  public Long getId() {
+    return id;
+  }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public void setStatus(Status status) {
+    this.status = status;
+  }
+
+  public List<Lesson> getLessons() {
+    return lessons;
+  }
+
+  public void setLessons(List<Lesson> lessons) {
+    this.lessons = lessons;
+  }
+
+  
+  
 }
 
 // @GeneratedValue(strategy = GenerationType.AUTO) // Essa anotação indica que o valor do campo id será gerado automaticamente pelo banco de dados. O hibernate vai gerar um valor único para o campo id quando um novo curso for criado. O strategy é a estratégia de geração do id. O AUTO significa que o hibernate vai escolher a melhor estratégia de geração de id para o banco de dados que você está usando. Você pode usar outras estratégias, como IDENTITY, SEQUENCE ou TABLE, **dependendo do banco de dados e da sua necessidade.**
@@ -83,3 +127,8 @@ public class Course {
 O que cada um faz na prática
 @Size impede que valores muito curtos/longos passem na validação (por exemplo, quando você usa @Valid em controladores Spring MVC). Se violado, você recebe um erro de validação e não prossegue.
  */
+/*get e set
+Eu não sou muito fã de deixar os getters e setters aqui. Eu prefiro ter métodos como adicionarLicao() e removerLicao(), porque essas propriedades aqui não são propriedades que você quer que tenham acesso diretamente, já que você pode modificar a referência desse array aqui.
+Então essa é uma outra coisa também que eu vou deixar para vocês pensarem: se realmente vale a pena a gente ter métodos getLessons() e setLessons() aqui, no lugar de criar um método adicionarLicao(), um outro método para removerLicao(), ou um outro método para limpar todas as lições que nós temos nesse curso, no lugar de deixar esse setter, já que a gente pode remover essa referência aqui do Java.
+
+*/

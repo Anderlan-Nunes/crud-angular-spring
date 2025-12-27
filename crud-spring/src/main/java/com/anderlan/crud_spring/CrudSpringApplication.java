@@ -28,13 +28,13 @@ public class CrudSpringApplication {
 			// aki seta a liçao dentro do curso
 			Lesson l= new Lesson();
 			l.setName("Introdução");
-			l.setYoutubeUrl("rgEKMHGYyns");
+			l.setYoutubeUrl("12345678901");
 			l.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
 			course.getLessons().add(l);
 
 			Lesson l1= new Lesson();
 			l1.setName("angular");
-			l1.setYoutubeUrl("ffffs");
+			l1.setYoutubeUrl("12345678902");
 			l1.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
 			course.getLessons().add(l1);
 
