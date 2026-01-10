@@ -2,20 +2,21 @@ package com.anderlan.crud_spring.dto;
 
 import java.util.List;
 
+import com.anderlan.crud_spring.enums.Category;
+import com.anderlan.crud_spring.enums.converters.validation.ValueOfEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record CourseDTO(
     // bassicamente esses sao as mesmas validações que temos na entidade Course
     @JsonProperty("_id") Long id,
     @NotBlank @NotNull @Size(min = 3, max = 100) String name,
-    @NotNull @Size(max = 20) @Pattern(regexp = "^(Back-end|Front-end)$") String category,
+    @NotNull @Size(max = 20) @ValueOfEnum(enumClass = Category.class) String category,
     @NotNull @NotEmpty @Valid List<LessonDTO> lessons
 ) {
     
