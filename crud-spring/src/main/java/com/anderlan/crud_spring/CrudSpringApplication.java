@@ -21,24 +21,28 @@ public class CrudSpringApplication {
 	CommandLineRunner initDataBase(CourseRepository courseRepository) {
 		return args -> {
 			courseRepository.deleteAll(); // Deletar todos os cursos do banco de dados antes de inserir novos cursos.
-			Course course = new Course();
-			course.setName("Java");
-			course.setCategory(Category.BACK_END);
 
-			// aki seta a liçao dentro do curso
-			Lesson l= new Lesson();
-			l.setName("Introdução");
-			l.setYoutubeUrl("12345678901");
-			l.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
-			course.getLessons().add(l);
+			for (int i = 0; i< 20; i++) {
 
-			Lesson l1= new Lesson();
-			l1.setName("angular");
-			l1.setYoutubeUrl("12345678902");
-			l1.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
-			course.getLessons().add(l1);
-
-			courseRepository.save(course);
+				Course course = new Course();
+				course.setName("Java" + i);
+				course.setCategory(Category.BACK_END);
+	
+				// aki seta a liçao dentro do curso
+				Lesson l= new Lesson();
+				l.setName("Introdução");
+				l.setYoutubeUrl("12345678901");
+				l.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
+				course.getLessons().add(l);
+	
+				Lesson l1= new Lesson();
+				l1.setName("angular");
+				l1.setYoutubeUrl("12345678902");
+				l1.setCourse(course); // agente nao vai setar o identificador agente vai setar o objeto inteiro(a referencia do objeto). O curso aki ja foi setado la em cima. Primeiro sempre seta o objeto principal.
+				course.getLessons().add(l1);
+	
+				courseRepository.save(course);
+			}
 		};
 	}
 }
@@ -71,3 +75,13 @@ Escalabilidade [23:54]: A Loiane enfatiza que essa otimização é crucial para 
 
 Em resumo, a preferência é sempre por utilizar o relacionamento bidirecional (@OneToMany de um lado e @ManyToOne do outro) e setar o objeto inteiro (setCurso(c)) em vez de gerenciar IDs, permitindo que o Hibernate/JPA otimize as consultas e vá ao banco de dados menos vezes
  */
+
+/*
+Dica de Boas Práticas: No código, fazer o relacionamento bidirecional manualmente:
+
+l.setCourse(course); (A lição aponta para o curso)
+
+course.getLessons().add(l); (O curso adiciona a lição na sua lista)
+
+Isso está corretíssimo para garantir que o objeto na memória esteja consistente antes do save!
+*/

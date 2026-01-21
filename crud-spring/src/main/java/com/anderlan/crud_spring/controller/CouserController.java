@@ -1,7 +1,5 @@
 package com.anderlan.crud_spring.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,16 +9,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anderlan.crud_spring.dto.CourseDTO;
+import com.anderlan.crud_spring.dto.CoursePageDTO;
 import com.anderlan.crud_spring.service.CourseService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 // import lombok.AllArgsConstructor; ela mudou para Controller → Service → Repository
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Validated // essa anotação é usada para validar os dados que estão sendo enviados no corpo da requisição. Ela vai validar os dados antes de chegar no método do controller. Então, se os dados não estiverem válidos, o Spring vai retornar um erro 400 (Bad Request) e não vai chamar o método do controller.
 // se voce so usar o @Valid nao precisava, mas como estou usando o notNull e o positive, eu preciso usar o @Validated para que o Spring valide esses dados antes de chegar no método do controller.
@@ -39,9 +41,14 @@ public class CouserController {
   }
 
   @GetMapping
+  public CoursePageDTO list(@RequestParam(defaultValue = "0") @PositiveOrZero int pageNumber, @RequestParam(defaultValue = "10") @Positive @Max(100) int pageSize) { // se quiser usar outro nome @RequestParam("pg") pode usar assim
+    return courseService.list(pageNumber, pageSize);
+  }
+
+  /*@GetMapping // mudoou para usar a paginação
   public List<CourseDTO> list() {
     return courseService.list(); // ela mudou para Controller → Service → Repository
-  }
+  }*/
 
   @GetMapping("/{id}") // esse método vai receber o id atraves da URL
   public CourseDTO fingById(@PathVariable @NotNull @Positive Long id) {
