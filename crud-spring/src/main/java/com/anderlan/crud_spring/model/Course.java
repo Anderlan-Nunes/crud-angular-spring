@@ -37,7 +37,7 @@ import jakarta.validation.constraints.Size;
 public class Course {
 
   @Id // Essa anotação indica que o campo id é a chave primária da entidade. O hibernate vai criar um campo id no banco de dados e vai ser a chave primária.
-  @GeneratedValue(strategy = GenerationType.AUTO) // Essa anotação indica que o valor do campo id será gerado automaticamente pelo banco de dados. O hibernate vai gerar um valor único para o campo id quando um novo curso for criado.
+  @GeneratedValue(strategy = GenerationType.IDENTITY) // Essa anotação indica que o valor do campo id será gerado automaticamente pelo banco de dados. O hibernate vai gerar um valor único para o campo id quando um novo curso for criado.
   @JsonProperty("_id")// essa anotaçao indica que o campo id sera mapeado para o campo _id no json.
   private Long id;
 

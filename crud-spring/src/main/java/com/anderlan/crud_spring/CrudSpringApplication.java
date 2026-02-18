@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import com.anderlan.crud_spring.enums.Category;
 import com.anderlan.crud_spring.model.Course;
@@ -18,6 +19,7 @@ public class CrudSpringApplication {
 	}
 
 	@Bean // Spring vai criar um bean do tipo CommandLineRunner, ou seja, ele vai executar esse método quando a aplicação for iniciada.
+	@Profile("dev") // esse bean só vai ser criado quando o perfil "dev" estiver ativo. Isso é útil para evitar que dados de teste sejam inseridos em um ambiente de produção.
 	CommandLineRunner initDataBase(CourseRepository courseRepository) {
 		return args -> {
 			courseRepository.deleteAll(); // Deletar todos os cursos do banco de dados antes de inserir novos cursos.
