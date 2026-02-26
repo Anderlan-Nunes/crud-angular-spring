@@ -1,12 +1,13 @@
-import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 import { Course } from '../../models/course';
 import { CoursesService } from '../../services/courses.service';
@@ -15,37 +16,48 @@ import { CoursesListComponent } from "../../components/courses-list/courses-list
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { error } from 'console';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
+import { CoursePage } from '../../models/course-page';
 
 
-
+const DEFAULT_PAGE_EVENT: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 };
 @Component({
   selector: 'app-courses',
-  imports: [MatCardModule,MatProgressSpinnerModule, MatToolbarModule,
-    CommonModule, CoursesListComponent],
+  imports: [MatCardModule, MatProgressSpinnerModule, MatToolbarModule,
+    CommonModule, CoursesListComponent, MatPaginator],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class CoursesComponent {
 
-  courses$: Observable<Course[]> | null = null;
+  courses$: Observable<CoursePage> | null = null;
   readonly dialog = inject(MatDialog);
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
   private readonly _snackBar = inject(MatSnackBar);
   cdr = inject(ChangeDetectorRef)
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  pageIndex: number = 0;
+  pageSize: number = 10;
+
   constructor(private readonly coursesService: CoursesService) {
     this.loadCourses();
   }
 
-  private loadCourses() {
-    this.courses$ = this.coursesService.listCourses()
+  loadCourses(pageEvent: PageEvent = DEFAULT_PAGE_EVENT) {
+    this.courses$ = this.coursesService.listCourses(pageEvent.pageIndex, pageEvent.pageSize)
       .pipe(
+        // tap - pega o pageIndex e atualiza com o que eu estou passando aki pageEvent.pageIndex. "Executa efeitos colaterais (ex: atualizar variáveis ou logs) sem modificar o fluxo de dados principal."
+        tap(() => {
+          this.pageIndex = pageEvent.pageIndex;
+          this.pageSize = pageEvent.pageSize;
+        }), 
         catchError(error => {
           this.onError('Erro ao carregar cursos. Tente mais tarde!');
           console.log(error);
-          return of([]);
+          return of({courses: [], totalElements: 0, totalPages: 0});
         })
       )
       this.cdr.markForCheck(); // <- força a verificação de mudança

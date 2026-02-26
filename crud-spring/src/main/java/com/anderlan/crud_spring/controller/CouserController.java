@@ -41,7 +41,7 @@ public class CouserController {
   }
 
   @GetMapping
-  public CoursePageDTO list(@RequestParam(defaultValue = "0") @PositiveOrZero int pageNumber, @RequestParam(defaultValue = "10") @Positive @Max(100) int pageSize) { // se quiser usar outro nome @RequestParam("pg") pode usar assim
+  public CoursePageDTO list(@RequestParam(name = "page", defaultValue = "0") @PositiveOrZero int pageNumber, @RequestParam(defaultValue = "10") @Positive @Max(100) int pageSize) { // se quiser usar outro nome @RequestParam("pg") pode usar assim
     return courseService.list(pageNumber, pageSize);
   }
 

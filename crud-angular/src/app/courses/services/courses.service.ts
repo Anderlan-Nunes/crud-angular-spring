@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Course } from '../models/course';
 import { delay, first, Observable, tap } from 'rxjs';
+import { CoursePage } from '../models/course-page';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,9 @@ export class CoursesService {
 
   constructor(private readonly httpClient : HttpClient) { }
 
-  listCourses() : Observable<Course[]> {
-    return this.httpClient.get<Course[]>(this.API).pipe( 
+  listCourses(page = 0, pageSize = 10) : Observable<CoursePage> {
+    return this.httpClient.get<CoursePage>(this.API, { params: { page, pageSize}})
+    .pipe( 
       first(), // finaliza a inscrição assim quando obter a primeira resposta que o servidor me enviar, (usa quando nao eh um websocket)
       // delay(5000),
       tap(courses => console.log(courses)) // tap é um operador que permite executar uma função com o resultado do observable, sem alterar o resultado do observable usa-se para fazer debug
